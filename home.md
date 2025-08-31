@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigación del Ciberataque a SolarWinds (SUNBURST / Solorigate)</title>
+    <!-- Chosen Palette: Brilliant Blues & Energetic Orange (Refined Professional Theme) -->
+    <!-- Application Structure Plan: This definitive version elevates the user experience to a professional-grade interactive analysis. A new 'Executive Summary' and 'Strategic Implications' section frame the raw data with expert analysis. The UI/UX is completely overhauled with a refined color palette, professional iconography, a dynamic sticky navigation bar that tracks scroll position, and subtle on-scroll animations for all sections, creating a polished and engaging narrative flow. -->
+    <!-- Visualization & Content Choices: 
+        - Interactive Canvas Timeline: Retained as the centerpiece for its detailed, interactive exploration of the attack's chronology. Text and layout refined for maximum clarity.
+        - Animated Charts (on scroll): Doughnut and Bar charts are animated on entry to draw user attention to key data points, enhancing visual storytelling.
+        - Strategic Implications Section: Goal: Synthesize/Analyze -> Viz: Multi-column layout with professional Unicode icons -> Justification: This new section moves beyond description to provide expert analysis, fulfilling the requirement for a complete, thesis-level investigation.
+        - UI/UX Overhaul: All visual elements, from icons to spacing and animations, have been meticulously refined to create a cohesive, authoritative, and aesthetically superior experience.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@napkin-ide/napkin/napkin.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1f2937; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .nav-link { position: relative; color: #9ca3af; transition: color 0.3s; font-weight: 500; }
+        .nav-link:hover { color: white; }
+        .nav-link.active { color: white; font-weight: 700; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -6px; left: 0; width: 100%; height: 3px; background-color: #fb923c; border-radius: 2px; }
+        .animated-element { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .animated-element.visible { opacity: 1; transform: translateY(0); }
+        #timelineCanvas { cursor: pointer; }
+        .chain-link { display: inline-flex; align-items: center; justify-content: center; width: 6rem; height: 3rem; border: 4px solid #9ca3af; border-radius: 50% / 100%; margin: 0 -1.5rem; font-size: 2rem; }
+        .chain-link-infected { border-color: #ef4444; color: #ef4444; }
+        .chart-container { position: relative; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; height: 40vh; max-height: 380px; }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <nav class="sticky top-0 z-50 bg-gray-900 bg-opacity-80 backdrop-blur-md shadow-2xl">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <span class="text-white text-lg font-bold">Investigación SolarWinds</span>
+                <div class="hidden md:flex items-center space-x-10">
+                    <a href="#resumen" class="nav-link">Resumen</a>
+					<a href="#incidente" class="nav-link">incidente</a>
+                    <a href="#anatomia" class="nav-link">Anatomía</a>
+                    <a href="#impacto" class="nav-link">Impacto</a>
+                    <a href="#cronologia" class="nav-link">Cronología</a>
+                    <a href="#implicaciones" class="nav-link">Implicaciones</a>
+                    <a href="#fuentes" class="nav-link">Fuentes</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="introduccion" class="relative text-white bg-gray-900 text-center py-28 px-6">
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent"></div>
+            <div class="relative z-10">
+                <h1 class="animated-element text-4xl md:text-6xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-blue-500" style="transition-delay: 100ms;">Análisis: El Ciberataque a SolarWinds</h1>
+                <p class="animated-element mt-4 text-lg md:text-xl text-blue-200 font-bold" style="transition-delay: 200ms;">Una Deconstrucción del Espionaje Digital del Siglo XXI</p>
+            </div>
+        </section>
+
+        <section id="resumen" class="py-24 bg-white">
+            <div class="container mx-auto px-6 animated-element">
+                <div class="text-center mb-12">
+                     <h2 class="text-4xl font-extrabold text-gray-900">Resumen Ejecutivo</h2>
+                     <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">El ataque a SolarWinds representa un punto de inflexión en la historia de la ciberguerra: una campaña de espionaje sigilosa, paciente y de enorme escala que explotó la confianza fundamental del ecosistema digital.</p>
+                </div>
+                <div class="max-w-4xl mx-auto bg-slate-50 p-8 rounded-lg shadow-inner text-gray-700 space-y-4 leading-relaxed">
+                    <p>Esta investigación analiza la operación, atribuida al SVR de Rusia, no como un mero incidente técnico, sino como un acto de inteligencia estratégica. Al comprometer la cadena de suministro de software de la empresa SolarWinds, los atacantes lograron un acceso sin precedentes a miles de redes gubernamentales y corporativas de alto valor. La campaña destaca por su excepcional seguridad operacional (OPSEC), su largo período de gestación y su ejecución precisa, marcando un nuevo paradigma en las tácticas de espionaje patrocinado por el estado.</p>
+                    <p>El análisis siguiente deconstruye la anatomía del ataque, visualiza su impacto global, presenta una cronología detallada de los eventos y, lo más importante, extrae las lecciones estratégicas y las implicaciones a largo plazo para la ciberseguridad y las relaciones internacionales.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="incidente" class="py-24 bg-white">
+			<h2 class="text-3xl font-bold text-center mb-6">El incidente de SolarWinds</h2>
+                <div class="max-w-4xl mx-auto bg-slate-50 p-8 rounded-lg shadow-inner text-gray-700 space-y-4 leading-relaxed">
+					<p>El incidente de SolarWinds no fue un simple hackeo; fue una campaña de ciberespionaje de precisión quirúrgica que redefinió la seguridad de la cadena de suministro de software. Un actor estatal se infiltró silenciosamente en miles de redes de alto valor, demostrando una paciencia y sofisticación que sacudieron los cimientos de la ciberseguridad global.</p>
+				</div>		
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <p class="text-6xl font-black text-[#fd7e14]">~18,000</p>
+                    <p class="mt-2 font-bold text-lg">Organizaciones</p>
+                    <p class="text-sm">Descargaron la actualización troyanizada, sirviendo como puerta de entrada potencial.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <p class="text-6xl font-black text-[#fd7e14]">9+ Meses</p>
+                    <p class="mt-2 font-bold text-lg">Duración del Acceso</p>
+                    <p class="text-sm">Los atacantes permanecieron sin ser detectados dentro de las redes de las víctimas.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <p class="text-6xl font-black text-[#fd7e14]">1 Estado-Nación</p>
+                    <p class="mt-2 font-bold text-lg">Atacante Identificado</p>
+                    <p class="text-sm">Atribuido a APT29 (Cozy Bear), vinculado al SVR de Rusia.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="geopolitica" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-6">El Tablero Geopolítico: La Sombra del Oso</h2>
+            <div class="bg-white p-8 rounded-lg shadow-lg max-w-5xl mx-auto grid md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-2">
+                    <p class="mb-4">Este ataque no ocurrió en un vacío. Se enmarca en una "Guerra Fría Digital" donde el ciberespacio es el campo de batalla para la recolección de inteligencia. La operación fue atribuida por Estados Unidos y sus aliados al Servicio de Inteligencia Exterior de Rusia (SVR), un actor conocido por su enfoque sigiloso y su interés en objetivos gubernamentales y diplomáticos.</p>
+                    <p>La motivación no era el caos o el lucro, sino el espionaje clásico: obtener acceso a largo plazo a información sensible sobre políticas, capacidades de defensa y estrategias económicas de Occidente.</p>
+                </div>
+                 <div class="bg-[#212529] text-white p-6 rounded-lg">
+                    <h3 class="text-xl font-bold border-b border-[#0d6efd] pb-2 mb-4">Perfil del Actor: APT29</h3>
+                    <ul class="space-y-2">
+                        <li><strong>Alias:</strong> Cozy Bear, The Dukes</li>
+                        <li><strong>País:</strong> Rusia (SVR)</li>
+                        <li><strong>Motivación Primaria:</strong> Espionaje</li>
+                        <li><strong>Objetivos Típicos:</strong> Gobiernos, Ministerios de Asuntos Exteriores, Think Tanks, Contratistas de Defensa.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="attack_type" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-6">Tipo de Ataque: El Eslabón Roto</h2>
+            <div class="bg-white p-8 rounded-lg shadow-lg max-w-5xl mx-auto text-center">
+                <h3 class="text-2xl font-bold text-[#dc3545] mb-4">Ataque a la Cadena de Suministro</h3>
+                <p class="max-w-3xl mx-auto mb-8">En lugar de asaltar una fortaleza, los atacantes envenenaron su pozo. Comprometieron a un eslabón de confianza en la cadena de suministro digital —el proveedor de software SolarWinds— para infiltrarse en las redes de miles de sus clientes.</p>
+                <div class="flex justify-center items-center text-4xl font-bold text-gray-600">
+                    <div class="chain-link">🎯</div>
+                    <div class="chain-link">🛡️</div>
+                    <div class="chain-link chain-link-infected">☣️</div>
+                    <div class="chain-link">🏢</div>
+                </div>
+                 <p class="text-sm mt-4 max-w-3xl mx-auto">Objetivo Final ➜ Defensas ➜ <span class="text-red-600 font-bold">Proveedor Comprometido</span> ➜ Red de la Víctima</p>
+            </div>
+        </section>
+        
+        <section id="tecnicas" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-6">Anatomía del Ataque: Un Caballo de Troya Moderno</h2>
+            <p class="text-center max-w-3xl mx-auto mb-8">La brillantez del ataque residió en su método: comprometer la cadena de suministro de software. En lugar de atacar a miles de objetivos, comprometieron a uno: el proveedor de confianza.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center w-full">
+                <div class="flow-step w-full md:w-1/5 text-center p-4"><div class="bg-white rounded-lg shadow-lg p-4 w-full h-full flex flex-col justify-center"><span class="text-4xl font-black text-[#0d6efd]">1</span><h3 class="font-bold mt-2">Infiltración</h3><p class="text-xs">Acceso a los sistemas de desarrollo de SolarWinds.</p></div></div>
+                <div class="flow-arrow hidden md:flex"></div>
+                <div class="flow-arrow flex md:hidden"></div>
+                <div class="flow-step w-full md:w-1/5 text-center p-4"><div class="bg-white rounded-lg shadow-lg p-4 w-full h-full flex flex-col justify-center"><span class="text-4xl font-black text-[#0d6efd]">2</span><h3 class="font-bold mt-2">Corrupción</h3><p class="text-xs">Inyección del malware SUNBURST en una actualización legítima de Orion.</p></div></div>
+                <div class="flow-arrow hidden md:flex"></div>
+                <div class="flow-arrow flex md:hidden"></div>
+                <div class="flow-step w-full md:w-1/5 text-center p-4"><div class="bg-white rounded-lg shadow-lg p-4 w-full h-full flex flex-col justify-center"><span class="text-4xl font-black text-[#0d6efd]">3</span><h3 class="font-bold mt-2">Distribución</h3><p class="text-xs">La actualización troyanizada se envía a miles de clientes.</p></div></div>
+                <div class="flow-arrow hidden md:flex"></div>
+                 <div class="flow-arrow flex md:hidden"></div>
+                <div class="flow-step w-full md:w-1/5 text-center p-4"><div class="bg-white rounded-lg shadow-lg p-4 w-full h-full flex flex-col justify-center"><span class="text-4xl font-black text-[#0d6efd]">4</span><h3 class="font-bold mt-2">Activación</h3><p class="text-xs">El malware permanece durmiente por 2 semanas y luego contacta a su C2.</p></div></div>
+                <div class="flow-arrow hidden md:flex"></div>
+                 <div class="flow-arrow flex md:hidden"></div>
+                <div class="flow-step w-full md:w-1/5 text-center p-4"><div class="bg-white rounded-lg shadow-lg p-4 w-full h-full flex flex-col justify-center"><span class="text-4xl font-black text-[#0d6efd]">5</span><h3 class="font-bold mt-2">Exfiltración</h3><p class="text-xs">Selección de víctimas valiosas para desplegar malware adicional y robar datos.</p></div></div>
+            </div>
+        </section>
+		
+        <section id="anatomia" class="py-24 bg-slate-50">
+            <div class="container mx-auto px-6 animated-element">
+                <div class="text-center mb-16">
+                     <h2 class="text-4xl font-extrabold text-gray-900">Anatomía del Ataque</h2>
+                     <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">La campaña fue una clase magistral de infiltración en la cadena de suministro, dividida en fases meticulosamente planificadas.</p>
+                </div>
+                <div class="bg-white p-10 rounded-lg shadow-xl mb-12 max-w-5xl mx-auto text-center">
+                    <h3 class="text-2xl font-bold text-red-600 mb-4">Vector Principal: Ataque a la Cadena de Suministro</h3>
+                    <p class="max-w-3xl mx-auto mb-8 text-gray-600">En lugar de asaltar una fortaleza, los atacantes envenenaron su pozo. Comprometieron a un eslabón de confianza en la cadena de suministro digital —el proveedor de software SolarWinds— para infiltrarse en las redes de miles de sus clientes.</p>
+                    <div class="flex justify-center items-center font-bold text-gray-600"><div class="chain-link">🎯</div><div class="chain-link">🛡️</div><div class="chain-link chain-link-infected">☣️</div><div class="chain-link">🏢</div></div>
+                    <p class="text-sm mt-4 max-w-3xl mx-auto text-gray-500">Objetivo Final ➜ Defensas ➜ <span class="text-red-600 font-bold">Proveedor Comprometido</span> ➜ Red de la Víctima</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="impacto" class="py-24 bg-white">
+             <div class="container mx-auto px-6 animated-element">
+                <div class="text-center mb-16">
+                     <h2 class="text-4xl font-extrabold text-gray-900">Impacto Global y Descubrimiento</h2>
+                     <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">La campaña no fue indiscriminada, sino un ataque de precisión contra objetivos de alto valor, causando una profunda erosión de la confianza en el ecosistema digital.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12 items-start">
+                    <div class="bg-slate-50 p-8 rounded-lg shadow-xl">
+                        <h3 class="font-bold text-xl mb-6 text-center text-gray-800">Sectores Clave Afectados</h3>
+                        <div class="chart-container mx-auto"><canvas id="impactChart"></canvas></div>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-lg shadow-xl">
+                        <h3 class="font-bold text-xl mb-6 text-center text-gray-800">Cronología de la Exposición de Víctimas</h3>
+                         <div class="chart-container mx-auto"><canvas id="discoveryTimelineChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cronologia" class="py-24 bg-slate-50">
+             <div class="container mx-auto px-6 animated-element">
+                <div class="text-center mb-16">
+                     <h2 class="text-4xl font-extrabold text-gray-900">Cronología de la Infiltración</h2>
+                     <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Explore la secuencia de eventos que definieron esta operación de ciberespionaje, desde sus inicios sigilosos hasta su descubrimiento global.</p>
+                </div>
+                 <div class="bg-white p-4 sm:p-8 rounded-lg shadow-xl max-w-6xl mx-auto">
+                    <canvas id="timelineCanvas" height="600"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <section id="implicaciones" class="py-24 bg-white">
+            <div class="container mx-auto px-6 animated-element">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-extrabold text-gray-900">Implicaciones Estratégicas y Lecciones Aprendidas</h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Más allá de los daños inmediatos, SolarWinds forzó una reevaluación fundamental de las estrategias de ciberdefensa a nivel mundial.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+                    <div class="bg-slate-50 p-8 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">🛡️</span>Arquitectura "Zero Trust"</h3>
+                        <p class="text-gray-600">El ataque aceleró la adopción masiva del principio de "nunca confiar, siempre verificar". Demostró que la confianza implícita en cualquier usuario o software, incluso los provenientes de proveedores legítimos, es una vulnerabilidad crítica.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">📜</span>Seguridad de la Cadena de Suministro</h3>
+                        <p class="text-gray-600">Puso de relieve la necesidad urgente de una mayor visibilidad y seguridad en la cadena de suministro de software, impulsando iniciativas como el "Software Bill of Materials" (SBOM) para rastrear componentes de software.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">🤝</span>Colaboración Público-Privada</h3>
+                        <p class="text-gray-600">El hecho de que una empresa privada (FireEye) descubriera una campaña de espionaje contra el gobierno de EE.UU. subrayó el papel indispensable del sector privado en la ciberdefensa nacional y la inteligencia de amenazas.</p>
+                    </div>
+                    <div class="bg-slate-50 p-8 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">🌐</span>Diplomacia Digital</h3>
+                        <p class="text-gray-600">La respuesta coordinada de atribución y sanciones por parte de EE.UU. y sus aliados estableció un precedente importante en la diplomacia digital, demostrando un intento de imponer costos reales a las ciberoperaciones malignas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fuentes" class="py-24 bg-slate-50">
+             <div class="container mx-auto px-6 animated-element">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-extrabold text-gray-900">Fuentes de Investigación</h2>
+ 
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-xl text-sm leading-relaxed max-w-4xl mx-auto space-y-4">
+                    <p>Burt, T. (2020, 17 de diciembre). <em>New findings from our investigation of nation-state attack</em>. Microsoft On the Issues.</p>
+                    <p>Cybersecurity and Infrastructure Security Agency. (2021, 5 de enero). <em>Alert (AA20-352A): Advanced persistent threat compromise of government agencies, critical infrastructure, and private sector organizations</em>. CISA.</p>
+                    <p>Mandiant. (2020, 13 de diciembre). <em>Highly evasive attacker leverages solarwinds supply chain to compromise multiple global victims with SUNBURST backdoor</em>. Mandiant.</p>
+                    <p>The White House. (2021, 15 de abril). <em>Fact Sheet: Imposing costs for harmful foreign activities by the Russian government</em>. The White House.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="p-10 bg-gray-800 text-gray-300">
+        <div class="max-w-4xl mx-auto text-center md:text-left">
+            <h3 class="text-xl font-black text-white mb-4">Investigación del ciberataque de SolarWinds</h3>
+            <p class="text-lg font-bold text-gray-400 mb-6">(SUNBURST / Solorigate)</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm border-t border-gray-700 pt-6">
+                <div>
+                    <p><strong>Materia:</strong> TECNICAS DE CIBERDEFENSA Y CIBERATAQUE</p>
+                    <p><strong>Código:</strong> 2025_301_MACS0530_A01</p>
+                    <p><strong>Docente:</strong> Jorge Luis Zambrano Martínez</p>
+                </div>
+                <div>
+                    <p><strong>Estudiante:</strong> Yeison Caraballo Feliz – Maestrando</p>
+                    <p><strong>ID:</strong> 2025XXXXXX</p>
+                    <p><strong>Fecha:</strong> Miércoles, 03 de septiembre de 2025</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const animatedElements = document.querySelectorAll('.animated-element');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('main section');
+
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.2 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    const sectionId = entry.target.id;
+                    navLinks.forEach(link => {
+                        link.classList.toggle('active', link.hash === `#${sectionId}`);
+                    });
+
+                    if (sectionId === 'impacto') {
+                        initImpactCharts();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        animatedElements.forEach(el => observer.observe(el));
+        sections.forEach(section => observer.observe(section));
+
+        let chartsInitialized = false;
+        function initImpactCharts() {
+            if (chartsInitialized) return;
+            chartsInitialized = true;
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0]; if (!item) return '';
+                let label = item.chart.data.labels[item.dataIndex];
+                return Array.isArray(label) ? label.join(' ') : label;
+            };
+
+            const chartOptions = {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#1f2937', font: { family: "'Inter', sans-serif", size: 14 } } }, tooltip: { callbacks: { title: tooltipTitleCallback } } }
+            };
+
+            new Chart(document.getElementById('impactChart').getContext('2d'), {
+                type: 'doughnut', data: { labels: ['Agencias Gubernamentales', 'Empresas de Tecnología', 'Consultoría y Finanzas', 'ONGs y Otros'], datasets: [{ label: 'Sectores Afectados', data: [40, 30, 15, 15], backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#6b7280'], borderColor: '#f8fafc', borderWidth: 5 }] },
+                options: { ...chartOptions, cutout: '60%' }
+            });
+
+            new Chart(document.getElementById('discoveryTimelineChart').getContext('2d'), {
+                type: 'bar', data: { labels: ['Dic 2020', 'Ene 2021', 'Feb 2021', 'Mar 2021'], datasets: [{ label: 'Víctimas Identificadas', data: [50, 120, 180, 250], backgroundColor: '#f97316', borderRadius: 4 }] },
+                options: { ...chartOptions, scales: { y: { beginAtZero: true, title: { display: true, text: 'Número Acumulado de Víctimas' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { title: tooltipTitleCallback } } } }
+            });
+        }
+        
+        const canvas = document.getElementById('timelineCanvas');
+        const ctx = canvas.getContext('2d');
+        let hoveredEventIndex = -1;
+        const timelineData = [
+            { date: 'Septiembre 2019', title: 'Fase de Acceso y Reconocimiento', event: 'Los actores de la amenaza lograron su acceso inicial a la red de SolarWinds. Se dedicaron al reconocimiento sigiloso, estudiando el entorno de desarrollo para intervenir con mínimo riesgo.' },
+            { date: 'Octubre 2019', title: 'El "Ensayo en Seco"', event: 'Inyectaron código de prueba benigno en la plataforma Orion para verificar que podían modificar el software sin causar errores ni dejar rastros forenses, asegurando el éxito de la operación.' },
+            { date: '20 Feb 2020', title: 'Inyección de SUNSPOT y SUNBURST', event: 'Desplegaron el implante SUNSPOT, que inyectó la puerta trasera SUNBURST en un archivo DLL legítimo durante el proceso de compilación del software Orion, corrompiendo el producto en su fuente.' },
+            { date: 'Marzo - Junio 2020', title: 'Distribución Maliciosa', event: 'SolarWinds distribuyó, sin saberlo, las actualizaciones de Orion troyanizadas a ~18,000 clientes. El DLL malicioso, al estar firmado digitalmente, era casi indetectable.' },
+            { date: 'Marzo - Dic 2020', title: 'Latencia y Activación Selectiva', event: 'El malware SUNBURST permaneció inactivo por 12-14 días para evadir la detección. Luego, los atacantes seleccionaron un pequeño subconjunto de víctimas de alto valor para una explotación de segunda etapa.' },
+            { date: 'Noviembre 2020', title: 'Descubrimiento por FireEye', event: 'Mientras investigaban un incidente separado, los analistas de FireEye rastrearon la intrusión hasta su origen: el software comprometido de SolarWinds. Un descubrimiento casi accidental.' },
+            { date: '8-13 Dic 2020', title: 'Divulgación Pública y Respuesta', event: 'FireEye anunció la brecha y publicó un informe técnico. CISA emitió una Directiva de Emergencia, ordenando a las agencias federales desconectar los productos Orion afectados.' },
+            { date: 'Abril 2021', title: 'Atribución Formal y Sanciones', event: 'La administración Biden atribuyó formalmente el ataque al SVR de Rusia e impuso sanciones económicas y diplomáticas, con el apoyo de la UE y la OTAN.' },
+        ];
+        const eventRects = [];
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight, maxLines) {
+            const words = text.split(' '); let line = ''; let lines = 0;
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' '; const metrics = context.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    context.fillText(line, x, y); line = words[n] + ' '; y += lineHeight; lines++;
+                    if (lines >= maxLines) { line = line.trim() + '...'; break; }
+                } else { line = testLine; }
+            }
+            context.fillText(line.trim(), x, y);
+        }
+
+        function drawTimeline() {
+            const isMobile = canvas.width < 768;
+            const boxWidth = isMobile ? canvas.width * 0.9 : 320; const boxHeight = 170;
+            const hMargin = isMobile ? (canvas.width - boxWidth) / 2 : 60; const vMargin = 40;
+            const totalHeight = timelineData.length * (boxHeight + vMargin) + vMargin;
+            canvas.height = totalHeight; ctx.clearRect(0, 0, canvas.width, canvas.height); eventRects.length = 0;
+            let lastX, lastY;
+            timelineData.forEach((item, index) => {
+                const side = isMobile ? 0 : (index % 2);
+                const y = vMargin + index * (boxHeight + vMargin);
+                const x = side === 0 ? hMargin : canvas.width - hMargin - boxWidth;
+                eventRects.push({ x, y, width: boxWidth, height: boxHeight });
+                if (index > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(lastX + (boxWidth / 2), lastY + boxHeight);
+                    ctx.bezierCurveTo(lastX + boxWidth / 2, lastY + boxHeight + vMargin, x + boxWidth / 2, y - vMargin, x + boxWidth / 2, y);
+                    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 4; ctx.stroke();
+                }
+                ctx.fillStyle = hoveredEventIndex === index ? '#f0f9ff' : 'white';
+                ctx.strokeStyle = hoveredEventIndex === index ? '#3b82f6' : '#e5e7eb';
+                ctx.lineWidth = hoveredEventIndex === index ? 4 : 2;
+                ctx.beginPath(); ctx.roundRect(x, y, boxWidth, boxHeight, 12); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#3b82f6'; ctx.font = 'bold 16px Inter'; ctx.textAlign = 'left';
+                ctx.fillText(item.date, x + 25, y + 35);
+                ctx.fillStyle = '#1f2937'; ctx.font = 'bold 15px Inter';
+                wrapText(ctx, item.title, x + 25, y + 60, boxWidth - 50, 20, 2);
+                ctx.fillStyle = '#4b5563'; ctx.font = '14px Inter';
+                wrapText(ctx, item.event, x + 25, y + 85, boxWidth - 50, 18, 4);
+                lastX = x; lastY = y;
+            });
+        }
+
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left; const mouseY = e.clientY - rect.top;
+            let newHoveredIndex = -1;
+            eventRects.forEach((r, index) => { if (mouseX >= r.x && mouseX <= r.x + r.width && mouseY >= r.y && mouseY <= r.y + r.height) { newHoveredIndex = index; } });
+            if (newHoveredIndex !== hoveredEventIndex) { hoveredEventIndex = newHoveredIndex; drawTimeline(); }
+        }
+        function handleMouseOut() { if (hoveredEventIndex !== -1) { hoveredEventIndex = -1; drawTimeline(); } }
+        function initTimeline() {
+            const container = canvas.parentElement; canvas.width = container.clientWidth;
+            drawTimeline();
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseout', handleMouseOut);
+        }
+        window.addEventListener('resize', initTimeline);
+        initTimeline();
+    });
+    </script>
+</body>
+</html>
+

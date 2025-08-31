@@ -1,2 +1,0 @@
-# Ciberataque_a_SolarWinds
-Ciberataque_a_SolarWinds
